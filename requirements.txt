@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+sentence-transformers
+groq
+sqlglot
+datasets
+python-dotenv
+numpy
