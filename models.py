@@ -2,7 +2,6 @@ from pydantic import BaseModel, Field
 from typing import Optional, List, Dict, Any
 
 
-
 class RetrieveRequest(BaseModel):
     question: str = Field(..., min_length=3, max_length=500)
     top_k: int = Field(default=5, ge=1, le=20)
@@ -11,7 +10,6 @@ class RetrieveRequest(BaseModel):
 class TableDetail(BaseModel):
     relevance_score: float
     reason: str
-    columns: List[str]
 
 
 class RetrieveResponse(BaseModel):
@@ -19,7 +17,6 @@ class RetrieveResponse(BaseModel):
     scores: List[float]
     confidence: float
     details: Dict[str, TableDetail]
-
 
 
 class GenerateSQLRequest(BaseModel):
@@ -41,8 +38,6 @@ class GenerateSQLResponse(BaseModel):
     parsing_errors: Optional[str]
     confidence: float
     prompt_used: str
-    execution_result: Optional[ExecutionResult]
-
 
 
 class BenchmarkMetrics(BaseModel):
@@ -52,6 +47,17 @@ class BenchmarkMetrics(BaseModel):
     sql_execution_match_accuracy: float
     parsing_success_rate: float
     average_latency_ms: float
+
+
+class SubtaskBreakdown(BaseModel):
+    multi_table_retrieval: float
+    """Recall@5 averaged only over queries that require more than one table."""
+    column_mapping: float
+    """Fraction of valid SQLs that only reference tables from the retrieved schema."""
+    join_detection: float
+    """Fraction of multi-table queries where the generated SQL contains a JOIN."""
+    domain_knowledge: float
+    """Execution match rate for queries involving advanced SQL (CTEs, STDDEV, EXP/LN, HAVING)."""
 
 
 class ErrorAnalysis(BaseModel):
@@ -64,5 +70,5 @@ class ErrorAnalysis(BaseModel):
 class BenchmarkResponse(BaseModel):
     total_queries: int
     metrics: BenchmarkMetrics
+    subtask_breakdown: SubtaskBreakdown
     error_analysis: ErrorAnalysis
-    
