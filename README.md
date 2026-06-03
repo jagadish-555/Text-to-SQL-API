@@ -204,9 +204,16 @@ pip install -r requirements.txt
 ```bash
 # .env
 GROQ_API_KEY=your_groq_api_key_here
+HF_TOKEN=your_huggingface_token_here
 ```
 
-**3. Start the server:**
+**3. Load the dataset:**
+```bash
+python data_loader.py
+```
+This will download the required datasets from Hugging Face and build the local SQLite databases and JSON metadata files.
+
+**4. Start the server:**
 ```bash
 uvicorn main:app --reload
 ```
